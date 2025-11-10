@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Question{% endblock %}
+{% block content %}
+<h1 class="mb-3">{% if question %}Edit{% else %}New{% endif %} Question for {{ assignment.title }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="mb-3">
+        <label class="form-label" for="id_prompt">Prompt</label>
+        {{ form.prompt }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="id_question_type">Question Type</label>
+        {{ form.question_type }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="id_points">Points</label>
+        {{ form.points }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="id_order">Order</label>
+        {{ form.order }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="id_rubric">Rubric (for free response)</label>
+        {{ form.rubric }}
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="id_correct_answer">Correct Answer (for short response)</label>
+        {{ form.correct_answer }}
+    </div>
+    <h4>Multiple Choice Options</h4>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="id_option_1">Option A</label>
+            {{ form.option_1 }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="id_option_2">Option B</label>
+            {{ form.option_2 }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="id_option_3">Option C</label>
+            {{ form.option_3 }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="id_option_4">Option D</label>
+            {{ form.option_4 }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="id_option_5">Option E</label>
+            {{ form.option_5 }}
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label" for="id_correct_option">Correct Option</label>
+            {{ form.correct_option }}
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Save Question</button>
+</form>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block content %}
+<h1 class="mb-4">Analytics</h1>
+<h3>By Course</h3>
+<table class="table table-bordered mb-4">
+    <thead>
+        <tr>
+            <th>Course</th>
+            <th>Assignments</th>
+            <th>Average Score</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for course in courses %}
+        <tr>
+            <td>{{ course.code }} - {{ course.name }}</td>
+            <td>{{ course.assignment_count }}</td>
+            <td>{% if course.average_score %}{{ course.average_score|floatformat:2 }}{% else %}N/A{% endif %}</td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="3" class="text-center">No courses data.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+<h3>By Assignment</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Assignment</th>
+            <th>Course</th>
+            <th>Submissions</th>
+            <th>Average Score</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for assignment in assignments %}
+        <tr>
+            <td>{{ assignment.title }}</td>
+            <td>{{ assignment.course.code }}</td>
+            <td>{{ assignment.submission_count }}</td>
+            <td>{% if assignment.average_score %}{{ assignment.average_score|floatformat:2 }}{% else %}N/A{% endif %}</td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="4" class="text-center">No assignment data.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

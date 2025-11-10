@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Submission{% endblock %}
+{% block content %}
+<h1 class="mb-3">{{ submission.assignment.title }}</h1>
+<p><strong>Submitted:</strong> {{ submission.submitted_at }} {% if submission.is_late %}<span class="badge bg-danger">Late</span>{% endif %}</p>
+<p><strong>Status:</strong> {% if submission.published %}Published{% else %}Awaiting instructor{% endif %}</p>
+<p><strong>Total Score:</strong> {% if submission.total_score is not None %}{{ submission.total_score }} / {{ submission.assignment.total_points }}{% else %}Pending{% endif %}</p>
+<div class="accordion" id="answersAccordion">
+    {% for answer in answers %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}">
+                    {{ answer.question.prompt }} ({{ answer.question.points }} pts)
+                </button>
+            </h2>
+            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" data-bs-parent="#answersAccordion">
+                <div class="accordion-body">
+                    <p><strong>Your answer:</strong> {% if answer.selected_choice %}{{ answer.selected_choice.text }}{% else %}{{ answer.response_text|linebreaks }}{% endif %}</p>
+                    {% if answer.score is not None %}<p><strong>Score:</strong> {{ answer.score }}</p>{% endif %}
+                    {% if answer.feedback %}<p><strong>Feedback:</strong> {{ answer.feedback|linebreaks }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
