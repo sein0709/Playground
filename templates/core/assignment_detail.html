@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Assignment Detail{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <div>
+        <h1>{{ assignment.title }}</h1>
+        <p class="text-muted">{{ assignment.course.code }} | Due {{ assignment.due_date }}</p>
+        <p>{{ assignment.description|linebreaks }}</p>
+        <p><strong>Total points:</strong> {{ assignment.total_points }}</p>
+    </div>
+    <div class="text-end">
+        <a href="{% url 'assignment_edit' assignment.pk %}" class="btn btn-secondary mb-2">Edit Assignment</a>
+        <a href="{% url 'question_create' assignment.pk %}" class="btn btn-primary mb-2">Add Question</a>
+        <a href="{% url 'assignment_submissions' assignment.pk %}" class="btn btn-outline-primary mb-2">View Submissions</a>
+        <a href="{% url 'export_assignment_csv' assignment.pk %}" class="btn btn-outline-success">Export CSV</a>
+    </div>
+</div>
+<h3>Questions</h3>
+<div class="list-group mb-4">
+    {% for question in questions %}
+        <div class="list-group-item">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <h5>{{ forloop.counter }}. {{ question.prompt }}</h5>
+                    <span class="badge bg-info text-dark">{{ question.get_question_type_display }}</span>
+                    <span class="badge bg-secondary">{{ question.points }} pts</span>
+                    {% if question.question_type == 'mcq' %}
+                        <ul class="mt-2">
+                            {% for choice in question.choices.all %}
+                                <li>{% if choice.is_correct %}<strong>{% endif %}{{ choice.label }}) {{ choice.text }}{% if choice.is_correct %}</strong>{% endif %}</li>
+                            {% endfor %}
+                        </ul>
+                    {% elif question.question_type == 'short' %}
+                        <p class="mt-2"><strong>Answer:</strong> {{ question.correct_answer }}</p>
+                    {% else %}
+                        <p class="mt-2"><strong>Rubric:</strong> {{ question.rubric|linebreaks }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <a href="{% url 'question_edit' assignment.pk question.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    <form method="post" action="{% url 'question_delete' assignment.pk question.pk %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this question?');">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="list-group-item">No questions yet.</div>
+    {% endfor %}
+</div>
+<h3>Submissions</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Submitted At</th>
+            <th>Late</th>
+            <th>Total Score</th>
+            <th>Published</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for submission in submissions %}
+        <tr>
+            <td>{{ submission.student.get_full_name|default:submission.student.username }}</td>
+            <td>{{ submission.submitted_at }}</td>
+            <td>{% if submission.is_late %}<span class="badge bg-danger">Late</span>{% else %}On time{% endif %}</td>
+            <td>{{ submission.total_score|default:"Pending" }}</td>
+            <td>{% if submission.published %}<span class="badge bg-success">Published</span>{% else %}Draft{% endif %}</td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="5" class="text-center">No submissions yet.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

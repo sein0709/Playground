@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Course Detail{% endblock %}
+{% block content %}
+<h1 class="mb-3">{{ course.code }} - {{ course.name }}</h1>
+<p>{{ course.description|linebreaks }}</p>
+<h3>Students</h3>
+<ul class="list-group mb-4">
+    {% for student in course.students.all %}
+        <li class="list-group-item">{{ student.get_full_name|default:student.username }}</li>
+    {% empty %}
+        <li class="list-group-item">No students enrolled.</li>
+    {% endfor %}
+</ul>
+<h3>Assignments</h3>
+<ul class="list-group">
+    {% for assignment in course.assignments.all %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>{{ assignment.title }} (Due {{ assignment.due_date }})</span>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'assignment_detail' assignment.pk %}">Manage</a>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No assignments yet.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

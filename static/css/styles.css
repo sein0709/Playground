@@ -1,0 +1,7 @@
+body {
+    background-color: #f8f9fa;
+}
+
+textarea, input[type="text"], input[type="number"], input[type="datetime-local"] {
+    width: 100%;
+}

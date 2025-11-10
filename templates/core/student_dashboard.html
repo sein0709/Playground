@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load core_extras %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<h1 class="mb-4">Student Dashboard</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Assignment</th>
+            <th>Course</th>
+            <th>Due</th>
+            <th>Status</th>
+            <th>Score</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for assignment in assignments %}
+        {% with submission=submissions|get_item:assignment.id %}
+        <tr>
+            <td>{{ assignment.title }}</td>
+            <td>{{ assignment.course.code }}</td>
+            <td>{{ assignment.due_date }}</td>
+            <td>
+                {% if submission %}
+                    Submitted {% if submission.is_late %}<span class="badge bg-danger">Late</span>{% endif %}
+                {% else %}
+                    Pending
+                {% endif %}
+            </td>
+            <td>
+                {% if submission and submission.published and submission.total_score is not None %}
+                    {{ submission.total_score }} / {{ assignment.total_points }}
+                {% elif submission %}
+                    Awaiting grade
+                {% else %}
+                    --
+                {% endif %}
+            </td>
+            <td class="text-end">
+                {% if submission %}
+                    <a href="{% url 'submission_detail' submission.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+                {% else %}
+                    <a href="{% url 'assignment_take' assignment.pk %}" class="btn btn-sm btn-primary">Start</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endwith %}
+    {% empty %}
+        <tr><td colspan="6" class="text-center">No assignments assigned yet.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
